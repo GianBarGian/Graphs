@@ -2,7 +2,7 @@
 Simple graph implementation
 """
 from util import Stack, Queue  # These may come in handy
-
+import functools
 class Graph:
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
     def __init__(self):
@@ -107,7 +107,26 @@ class Graph:
                 visited.add(current_vertex)
                 for next_vertex in self.vertices[current_vertex]:
                     stack.push(next_vertex) 
-
+    def last_children(self, starting_vertex):
+        queue = Queue()
+        visited = set()
+        paths = []
+        queue.enqueue([starting_vertex])
+        while queue.size() > 0:
+            path = queue.dequeue()
+            current_vertex = path[-1]
+            if current_vertex not in visited:
+                if not len(self.vertices[current_vertex]):
+                    paths.append(path) 
+                visited.add(current_vertex)
+                for next_vertex in self.vertices[current_vertex]:
+                    new_path = list(path)
+                    new_path.append(next_vertex)
+                    queue.enqueue(new_path)
+        correct_path = functools.reduce(lambda a,b: a if len(a) > len(b) else b, paths)
+        if len(correct_path) > 1:
+            return correct_path[-1]
+        return -1
 
 
 
